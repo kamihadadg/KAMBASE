@@ -17,6 +17,15 @@ interface KycRecord {
     dateOfBirth?: string;
     nationality?: string;
   };
+  level2Data?: {
+    nationalCardFront?: string;
+    nationalCardBack?: string;
+    selfie?: string;
+  };
+  level3Data?: {
+    additionalDocuments?: string[];
+    notes?: string;
+  };
   dailyWithdrawLimit: number;
   reviewNotes?: string;
   createdAt: string;
@@ -39,6 +48,30 @@ export default function AdminKycPage() {
   const [selectedRecord, setSelectedRecord] = useState<KycRecord | null>(null);
   const [reviewNotes, setReviewNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+  const backendBaseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.BACKEND_URL || '';
+  const resolveUrl = (url?: string | null, userId?: string) => {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+
+    const clean = url.startsWith('/') ? url.substring(1) : url;
+    const prefix = backendBaseUrl.endsWith('/') ? backendBaseUrl.slice(0, -1) : backendBaseUrl;
+
+    // If already contains user folder, just prefix backend base if missing
+    if (clean.startsWith('uploads/user-')) {
+      return `${prefix}/${clean}`;
+    }
+
+    // If generic uploads path or bare filename, add user folder if available
+    const filename = clean.replace(/^uploads\//, '');
+    if (userId) {
+      return `${prefix}/uploads/user-${userId}/${filename}`;
+    }
+
+    // Fallback to generic uploads
+    return `${prefix}/uploads/${filename}`;
+  };
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -282,6 +315,80 @@ export default function AdminKycPage() {
               </div>
             )}
 
+            {/* Level 2 Data */}
+            {selectedRecord.level2Data && (
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Level 2 Data</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {selectedRecord.level2Data.nationalCardFront && (
+                    <div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">National Card Front</p>
+                      <img
+                        src={resolveUrl(selectedRecord.level2Data.nationalCardFront, selectedRecord.user.id)}
+                        alt="National Card Front"
+                        className="w-full h-32 object-cover rounded border border-gray-300 dark:border-gray-600 cursor-pointer"
+                        onClick={() => setPreviewImage(selectedRecord.level2Data.nationalCardFront!)}
+                      />
+                    </div>
+                  )}
+                  {selectedRecord.level2Data.nationalCardBack && (
+                    <div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">National Card Back</p>
+                      <img
+                        src={resolveUrl(selectedRecord.level2Data.nationalCardBack, selectedRecord.user.id)}
+                        alt="National Card Back"
+                        className="w-full h-32 object-cover rounded border border-gray-300 dark:border-gray-600 cursor-pointer"
+                        onClick={() => setPreviewImage(selectedRecord.level2Data.nationalCardBack!)}
+                      />
+                    </div>
+                  )}
+                  {selectedRecord.level2Data.selfie && (
+                    <div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Selfie</p>
+                      <img
+                        src={resolveUrl(selectedRecord.level2Data.selfie, selectedRecord.user.id)}
+                        alt="Selfie"
+                        className="w-full h-32 object-cover rounded border border-gray-300 dark:border-gray-600 cursor-pointer"
+                        onClick={() => setPreviewImage(selectedRecord.level2Data.selfie!)}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Level 3 Data */}
+            {selectedRecord.level3Data && (
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Level 3 Data</h3>
+                {selectedRecord.level3Data.additionalDocuments && selectedRecord.level3Data.additionalDocuments.length > 0 && (
+                  <div className="mb-4">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Additional Documents</p>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      {selectedRecord.level3Data.additionalDocuments.map((doc, index) => (
+                        <div key={index}>
+                          <img
+                            src={resolveUrl(doc, selectedRecord.user.id)}
+                            alt={`Document ${index + 1}`}
+                            className="w-full h-32 object-cover rounded border border-gray-300 dark:border-gray-600 cursor-pointer"
+                            onClick={() => setPreviewImage(doc)}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {selectedRecord.level3Data.notes && (
+                  <div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Additional Notes</p>
+                    <p className="text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800 p-3 rounded border">
+                      {selectedRecord.level3Data.notes}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Review Notes */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -324,6 +431,27 @@ export default function AdminKycPage() {
           </div>
         </div>
       )}
+
+          {/* Image Preview Modal */}
+          {previewImage && (
+            <div className="fixed inset-0 bg-black/70 z-[9999] flex items-center justify-center p-4" onClick={() => setPreviewImage(null)}>
+              <div className="relative max-w-5xl w-full max-h-[90vh] bg-transparent">
+                <button
+                  className="absolute -top-10 right-0 text-white hover:text-gray-200"
+                  onClick={() => setPreviewImage(null)}
+                  aria-label="Close preview"
+                >
+                  ✕
+                </button>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={resolveUrl(previewImage, selectedRecord?.user.id)}
+                  alt="Preview"
+                  className="w-full h-full object-contain rounded-lg shadow-2xl bg-black"
+                />
+              </div>
+            </div>
+          )}
     </div>
   );
 }

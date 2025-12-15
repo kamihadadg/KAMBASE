@@ -1,0 +1,27 @@
+{
+  "name": "KAMEXCHANGE - پلتفرم معاملاتی ارز دیجیتال",
+  "short_name": "KAMEXCHANGE",
+  "description": "پلتفرم معاملاتی پیشرفته ارزهای دیجیتال با ابزارهای حرفه‌ای",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "categories": ["finance", "business"],
+  "lang": "fa-IR",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

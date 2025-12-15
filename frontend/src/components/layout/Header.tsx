@@ -59,14 +59,6 @@ export default function Header() {
                     {t('nav.dashboard') || 'Dashboard'}
                   </Link>
 
-                  {user?.role !== 'operator' && (
-                    <Link
-                      href="/kyc"
-                      className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition px-2 py-1"
-                    >
-                      KYC Verification
-                    </Link>
-                  )}
                 </>
               )}
             </nav>

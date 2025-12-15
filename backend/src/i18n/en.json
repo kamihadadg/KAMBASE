@@ -1,0 +1,131 @@
+{
+  "auth": {
+    "login": {
+      "success": "Login successful",
+      "invalid_credentials": "Invalid email or password",
+      "account_locked": "Account is locked. Please contact support",
+      "email_not_verified": "Email not verified. Please check your email",
+      "user_not_found": "User not found"
+    },
+    "register": {
+      "success": "Registration successful. Please check your email to verify your account",
+      "email_exists": "Email already exists",
+      "validation_error": "Validation error",
+      "weak_password": "Password must be at least 8 characters long"
+    },
+    "verify_email": {
+      "success": "Email verified successfully",
+      "invalid_token": "Invalid or expired verification token",
+      "already_verified": "Email already verified",
+      "user_not_found": "User not found"
+    },
+    "resend_verification": {
+      "success": "Verification email sent successfully",
+      "already_verified": "Email already verified",
+      "user_not_found": "User not found",
+      "rate_limit": "Too many requests. Please try again later"
+    },
+    "forgot_password": {
+      "success": "Password reset link sent to your email",
+      "user_not_found": "User not found",
+      "rate_limit": "Too many requests. Please try again later"
+    },
+    "reset_password": {
+      "success": "Password reset successfully",
+      "invalid_token": "Invalid or expired reset token",
+      "weak_password": "Password must be at least 8 characters long",
+      "user_not_found": "User not found"
+    },
+    "2fa": {
+      "enabled": "Two-factor authentication enabled",
+      "disabled": "Two-factor authentication disabled",
+      "invalid_code": "Invalid 2FA code",
+      "not_enabled": "Two-factor authentication not enabled",
+      "already_enabled": "Two-factor authentication already enabled"
+    },
+    "token": {
+      "invalid": "Invalid token",
+      "expired": "Token expired",
+      "missing": "Token missing"
+    }
+  },
+  "users": {
+    "profile": {
+      "updated": "Profile updated successfully",
+      "password_changed": "Password changed successfully",
+      "current_password_incorrect": "Current password is incorrect",
+      "email_exists": "Email already exists",
+      "validation_error": "Validation error"
+    },
+    "not_found": "User not found",
+    "unauthorized": "Unauthorized access"
+  },
+  "kyc": {
+    "submitted": "KYC application submitted successfully",
+    "already_submitted": "KYC application already submitted",
+    "not_found": "KYC application not found",
+    "approved": "KYC application approved",
+    "rejected": "KYC application rejected",
+    "pending": "KYC application is pending review",
+    "invalid_status": "Invalid KYC status",
+    "file_upload_error": "File upload error",
+    "validation_error": "Validation error",
+    "level2_already_approved": "Level 2 KYC has been approved and cannot be modified",
+    "level3_already_approved": "Level 3 KYC has been approved and cannot be modified"
+  },
+  "wallet": {
+    "created": "Wallet created successfully",
+    "not_found": "Wallet not found",
+    "insufficient_balance": "Insufficient balance",
+    "deposit": {
+      "success": "Deposit request submitted",
+      "invalid_amount": "Invalid deposit amount"
+    },
+    "withdraw": {
+      "success": "Withdrawal request submitted",
+      "invalid_amount": "Invalid withdrawal amount",
+      "insufficient_balance": "Insufficient balance",
+      "below_minimum": "Amount below minimum withdrawal limit"
+    },
+    "transaction": {
+      "not_found": "Transaction not found",
+      "invalid": "Invalid transaction"
+    }
+  },
+  "orders": {
+    "created": "Order created successfully",
+    "cancelled": "Order cancelled successfully",
+    "not_found": "Order not found",
+    "insufficient_balance": "Insufficient balance",
+    "invalid_price": "Invalid price",
+    "invalid_quantity": "Invalid quantity",
+    "market_closed": "Market is closed",
+    "already_filled": "Order already filled",
+    "already_cancelled": "Order already cancelled"
+  },
+  "common": {
+    "validation_error": "Validation error",
+    "unauthorized": "Unauthorized",
+    "forbidden": "Access forbidden",
+    "not_found": "Resource not found",
+    "internal_error": "Internal server error",
+    "bad_request": "Bad request",
+    "rate_limit": "Rate limit exceeded",
+    "file_too_large": "File too large",
+    "invalid_file_type": "Invalid file type"
+  },
+  "email": {
+    "verification": {
+      "subject": "Verify your email - KAMEXCHANGE",
+      "body": "Please click the link below to verify your email address"
+    },
+    "password_reset": {
+      "subject": "Reset your password - KAMEXCHANGE",
+      "body": "Please click the link below to reset your password"
+    },
+    "welcome": {
+      "subject": "Welcome to KAMEXCHANGE",
+      "body": "Welcome to KAMEXCHANGE! Your account has been created successfully."
+    }
+  }
+}

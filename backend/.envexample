@@ -1,0 +1,35 @@
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=yourpassword
+DB_DATABASE=yourdb
+DB_SCHEMA=public 
+DB_SYNC=true
+# Server
+PORT=8080
+NODE_ENV=development
+
+# JWT - ????? ????? ????
+JWT_SECRET=kamcex-super-secret-key-2024-change-this
+JWT_EXPIRATION=1h
+REFRESH_TOKEN_SECRET=kamcex-refresh-token-secret-2024-change-this
+REFRESH_TOKEN_EXPIRATION=7d
+
+# Resend Email (???????)
+RESEND_API_KEY=re_Xdtryidslllefjlallfnwfl
+EMAIL_FROM=no-reply@kpser.shop
+EMAIL_FROM_NAME=kambase kambase
+
+# App
+BACKEND_URL=http://localhost:8080
+FRONTEND_URL=http://localhost:8081
+
+# Rate Limiting
+THROTTLE_TTL=60
+THROTTLE_LIMIT=100
+
+# File Upload
+MAX_FILE_SIZE=10485760
+UPLOAD_DIRECTORY=./uploads
+RECAPTCHA_SECRET_KEY=
+

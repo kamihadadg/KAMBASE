@@ -12,19 +12,34 @@ export class FileUploadService {
     this.ensureUploadDirectoryExists();
   }
 
-  private async ensureUploadDirectoryExists() {
+  async ensureUploadDirectoryExists(dirPath?: string) {
+    const pathToCheck = dirPath || this.uploadPath;
     try {
-      await fs.access(this.uploadPath);
+      await fs.access(pathToCheck);
     } catch {
-      await fs.mkdir(this.uploadPath, { recursive: true });
+      await fs.mkdir(pathToCheck, { recursive: true });
     }
   }
 
-  getMulterConfig() {
+  getUserUploadPath(userId?: string): string {
+    const safeUserId = userId || 'guest';
+    return `${this.uploadPath}/user-${safeUserId}`;
+  }
+
+  getMulterConfig(userId?: string) {
     return {
       storage: diskStorage({
-        destination: (req, file, cb) => {
-          cb(null, this.uploadPath);
+        destination: async (req, file, cb) => {
+          let destPath = this.uploadPath;
+
+          if (userId) {
+            destPath = this.getUserUploadPath(userId);
+            await this.ensureUploadDirectoryExists(destPath);
+          } else {
+            await this.ensureUploadDirectoryExists();
+          }
+
+          cb(null, destPath);
         },
         filename: (req, file, cb) => {
           const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -63,7 +78,10 @@ export class FileUploadService {
     }
   }
 
-  getFileUrl(filename: string): string {
-    return `/uploads/${filename}`;
+  getFileUrl(filename: string, userId?: string): string {
+    // Return full URL for frontend access
+    const baseUrl = process.env.BACKEND_URL || 'http://localhost:8080';
+    const path = userId ? `user-${userId}/${filename}` : filename;
+    return `${baseUrl}/uploads/${path}`;
   }
 }

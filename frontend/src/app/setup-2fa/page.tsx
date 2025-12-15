@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -145,7 +146,13 @@ function Setup2FAContent() {
                 <div className="flex justify-center mb-4">
                   <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
                     {qrCode ? (
-                      <img src={qrCode} alt="QR Code" className="w-64 h-64" />
+                      <img
+                        src={qrCode}
+                        alt="QR Code for 2FA setup"
+                        className="w-64 h-64"
+                        loading="lazy"
+                        decoding="async"
+                      />
                     ) : (
                       <div className="w-64 h-64 flex items-center justify-center bg-gray-100 dark:bg-gray-700">
                         <p className="text-gray-500 dark:text-gray-400">{t('common.loading')}</p>

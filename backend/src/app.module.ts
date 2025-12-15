@@ -2,6 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerModule } from '@nestjs/throttler';
+import * as path from 'path';
+import { I18nModule, AcceptLanguageResolver, HeaderResolver, QueryResolver } from 'nestjs-i18n';
+import { existsSync } from 'fs';
 import { TypeOrmConfigService } from './config/typeorm.config';
 
 import { AuthModule } from './modules/auth/auth.module';
@@ -16,6 +19,20 @@ import { FileUploadModule } from './modules/file-upload/file-upload.module';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env.local', '.env'],
+    }),
+
+    // Internationalization
+    I18nModule.forRoot({
+      fallbackLanguage: 'fa',
+      loaderOptions: {
+        path: path.join(process.cwd(), 'src/i18n/'),
+        watch: true,
+      },
+      resolvers: [
+        AcceptLanguageResolver,
+        new HeaderResolver(['accept-language']),
+        new QueryResolver(['lang']),
+      ],
     }),
 
     // Database

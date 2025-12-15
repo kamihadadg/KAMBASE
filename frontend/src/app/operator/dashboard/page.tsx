@@ -17,10 +17,12 @@ export default function OperatorDashboardPage() {
       return;
     }
 
-    if (user?.role !== 'operator') {
+    if (user?.role !== 'operator' && user?.role !== 'admin') {
       router.push('/dashboard');
       return;
     }
+
+    const isAdminAccessing = user?.role === 'admin';
 
     setLoading(false);
   }, [isAuthenticated, user, router]);
@@ -41,10 +43,13 @@ export default function OperatorDashboardPage() {
       {/* Welcome Section */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-          Operator Dashboard
+          {isAdminAccessing ? 'Admin - Operator Panel' : 'Operator Dashboard'}
         </h1>
         <p className="text-xl text-gray-600 dark:text-gray-400">
-          Welcome to the Operator Control Panel
+          {isAdminAccessing
+            ? 'Administrative access to operator functions'
+            : 'Welcome to the Operator Control Panel'
+          }
         </p>
       </div>
 
@@ -58,8 +63,15 @@ export default function OperatorDashboardPage() {
             </svg>
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-green-900 dark:text-green-100">Operator</h2>
-            <p className="text-green-700 dark:text-green-300">You have operator privileges</p>
+            <h2 className="text-2xl font-bold text-green-900 dark:text-green-100">
+              {isAdminAccessing ? 'Administrator' : 'Operator'}
+            </h2>
+            <p className="text-green-700 dark:text-green-300">
+              {isAdminAccessing
+                ? 'Admin access to operator panel - full privileges'
+                : 'You have operator privileges'
+              }
+            </p>
           </div>
         </div>
       </div>

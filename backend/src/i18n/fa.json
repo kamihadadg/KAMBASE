@@ -1,0 +1,131 @@
+{
+  "auth": {
+    "login": {
+      "success": "ورود با موفقیت انجام شد",
+      "invalid_credentials": "ایمیل یا رمز عبور نامعتبر است",
+      "account_locked": "حساب کاربری قفل شده است. لطفاً با پشتیبانی تماس بگیرید",
+      "email_not_verified": "ایمیل تایید نشده است. لطفاً ایمیل خود را بررسی کنید",
+      "user_not_found": "کاربر یافت نشد"
+    },
+    "register": {
+      "success": "ثبت نام با موفقیت انجام شد. لطفاً ایمیل خود را برای تایید حساب بررسی کنید",
+      "email_exists": "این ایمیل از قبل وجود دارد",
+      "validation_error": "خطای اعتبارسنجی",
+      "weak_password": "رمز عبور باید حداقل ۸ کاراکتر باشد"
+    },
+    "verify_email": {
+      "success": "ایمیل با موفقیت تایید شد",
+      "invalid_token": "توکن تایید نامعتبر یا منقضی شده است",
+      "already_verified": "ایمیل از قبل تایید شده است",
+      "user_not_found": "کاربر یافت نشد"
+    },
+    "resend_verification": {
+      "success": "ایمیل تایید با موفقیت ارسال شد",
+      "already_verified": "ایمیل از قبل تایید شده است",
+      "user_not_found": "کاربر یافت نشد",
+      "rate_limit": "تعداد درخواست‌ها زیاد است. لطفاً بعداً دوباره تلاش کنید"
+    },
+    "forgot_password": {
+      "success": "لینک بازنشانی رمز عبور به ایمیل شما ارسال شد",
+      "user_not_found": "کاربر یافت نشد",
+      "rate_limit": "تعداد درخواست‌ها زیاد است. لطفاً بعداً دوباره تلاش کنید"
+    },
+    "reset_password": {
+      "success": "رمز عبور با موفقیت بازنشانی شد",
+      "invalid_token": "توکن بازنشانی نامعتبر یا منقضی شده است",
+      "weak_password": "رمز عبور باید حداقل ۸ کاراکتر باشد",
+      "user_not_found": "کاربر یافت نشد"
+    },
+    "2fa": {
+      "enabled": "احراز هویت دو مرحله‌ای فعال شد",
+      "disabled": "احراز هویت دو مرحله‌ای غیرفعال شد",
+      "invalid_code": "کد ۲FA نامعتبر است",
+      "not_enabled": "احراز هویت دو مرحله‌ای فعال نیست",
+      "already_enabled": "احراز هویت دو مرحله‌ای از قبل فعال است"
+    },
+    "token": {
+      "invalid": "توکن نامعتبر",
+      "expired": "توکن منقضی شده",
+      "missing": "توکن موجود نیست"
+    }
+  },
+  "users": {
+    "profile": {
+      "updated": "پروفایل با موفقیت به‌روزرسانی شد",
+      "password_changed": "رمز عبور با موفقیت تغییر کرد",
+      "current_password_incorrect": "رمز عبور فعلی اشتباه است",
+      "email_exists": "این ایمیل از قبل وجود دارد",
+      "validation_error": "خطای اعتبارسنجی"
+    },
+    "not_found": "کاربر یافت نشد",
+    "unauthorized": "دسترسی غیرمجاز"
+  },
+  "kyc": {
+    "submitted": "درخواست KYC با موفقیت ارسال شد",
+    "already_submitted": "درخواست KYC از قبل ارسال شده است",
+    "not_found": "درخواست KYC یافت نشد",
+    "approved": "درخواست KYC تایید شد",
+    "rejected": "درخواست KYC رد شد",
+    "pending": "درخواست KYC در حال بررسی است",
+    "invalid_status": "وضعیت KYC نامعتبر",
+    "file_upload_error": "خطای آپلود فایل",
+    "validation_error": "خطای اعتبارسنجی",
+    "level2_already_approved": "سطح ۲ KYC تایید شده و قابل ویرایش نیست",
+    "level3_already_approved": "سطح ۳ KYC تایید شده و قابل ویرایش نیست"
+  },
+  "wallet": {
+    "created": "کیف پول با موفقیت ایجاد شد",
+    "not_found": "کیف پول یافت نشد",
+    "insufficient_balance": "موجودی کافی نیست",
+    "deposit": {
+      "success": "درخواست واریز ثبت شد",
+      "invalid_amount": "مبلغ واریز نامعتبر"
+    },
+    "withdraw": {
+      "success": "درخواست برداشت ثبت شد",
+      "invalid_amount": "مبلغ برداشت نامعتبر",
+      "insufficient_balance": "موجودی کافی نیست",
+      "below_minimum": "مبلغ کمتر از حداقل برداشت"
+    },
+    "transaction": {
+      "not_found": "تراکنش یافت نشد",
+      "invalid": "تراکنش نامعتبر"
+    }
+  },
+  "orders": {
+    "created": "سفارش با موفقیت ایجاد شد",
+    "cancelled": "سفارش لغو شد",
+    "not_found": "سفارش یافت نشد",
+    "insufficient_balance": "موجودی کافی نیست",
+    "invalid_price": "قیمت نامعتبر",
+    "invalid_quantity": "مقدار نامعتبر",
+    "market_closed": "بازار بسته است",
+    "already_filled": "سفارش از قبل تکمیل شده",
+    "already_cancelled": "سفارش از قبل لغو شده"
+  },
+  "common": {
+    "validation_error": "خطای اعتبارسنجی",
+    "unauthorized": "دسترسی غیرمجاز",
+    "forbidden": "دسترسی ممنوع",
+    "not_found": "منبع یافت نشد",
+    "internal_error": "خطای داخلی سرور",
+    "bad_request": "درخواست نامعتبر",
+    "rate_limit": "محدودیت نرخ درخواست",
+    "file_too_large": "فایل خیلی بزرگ است",
+    "invalid_file_type": "نوع فایل نامعتبر"
+  },
+  "email": {
+    "verification": {
+      "subject": "تایید ایمیل - KAMEXCHANGE",
+      "body": "لطفاً روی لینک زیر کلیک کنید تا آدرس ایمیل خود را تایید کنید"
+    },
+    "password_reset": {
+      "subject": "بازنشانی رمز عبور - KAMEXCHANGE",
+      "body": "لطفاً روی لینک زیر کلیک کنید تا رمز عبور خود را بازنشانی کنید"
+    },
+    "welcome": {
+      "subject": "خوش آمدید به KAMEXCHANGE",
+      "body": "خوش آمدید به KAMEXCHANGE! حساب کاربری شما با موفقیت ایجاد شد."
+    }
+  }
+}

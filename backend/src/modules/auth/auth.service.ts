@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { I18nService } from 'nestjs-i18n';
 import * as bcrypt from 'bcrypt';
 import * as speakeasy from 'speakeasy';
 import * as QRCode from 'qrcode';
@@ -26,26 +27,27 @@ export class AuthService {
     private jwtService: JwtService,
     private configService: ConfigService,
     private emailService: EmailService,
+    private i18n: I18nService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.usersService.findByEmail(email);
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException(await this.i18n.translate('auth.login.invalid_credentials'));
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException(await this.i18n.translate('auth.login.invalid_credentials'));
     }
 
     if (user.status !== 'active') {
-      throw new UnauthorizedException('Account is suspended or banned');
+      throw new UnauthorizedException(await this.i18n.translate('auth.login.account_locked'));
     }
 
     if (!user.emailVerified) {
       throw new UnauthorizedException({
-        message: 'Email verification required',
+        message: await this.i18n.translate('auth.login.email_not_verified'),
         error: 'EMAIL_NOT_VERIFIED',
         detail: 'Please verify your email address before logging in. Check your inbox for the verification link.',
       });
@@ -55,9 +57,31 @@ export class AuthService {
     return result;
   }
 
+  async validateUserExists(userId: string): Promise<any> {
+    const user = await this.usersService.findById(userId);
+    if (!user) {
+      throw new UnauthorizedException('User not found in database');
+    }
+
+    if (user.status !== 'active') {
+      throw new UnauthorizedException('Account is not active');
+    }
+
+    if (!user.emailVerified) {
+      throw new UnauthorizedException({
+        message: 'Email verification required',
+        error: 'EMAIL_NOT_VERIFIED',
+        detail: 'Please verify your email address before accessing protected resources.',
+      });
+    }
+
+    return { userId: user.id, email: user.email, role: user.role };
+  }
+
   async login(user: any) {
     const payload = { email: user.email, sub: user.id, role: user.role };
     return {
+      message: await this.i18n.translate('auth.login.success'),
       access_token: this.jwtService.sign(payload),
       refresh_token: this.jwtService.sign(payload, {
         secret: this.configService.get('JWT_REFRESH_SECRET'),
@@ -67,6 +91,8 @@ export class AuthService {
         id: user.id,
         email: user.email,
         role: user.role,
+        status: user.status,
+        emailVerified: user.emailVerified,
         twoFactorEnabled: user.twoFactorEnabled,
       },
     };
@@ -79,13 +105,17 @@ export class AuthService {
       });
 
       const user = await this.usersService.findById(payload.sub);
-      if (!user || user.status !== 'active') {
-        throw new UnauthorizedException();
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+
+      if (user.status !== 'active') {
+        throw new UnauthorizedException('Account is not active');
       }
 
       if (!user.emailVerified) {
         throw new UnauthorizedException({
-          message: 'Email verification required',
+          message: await this.i18n.translate('auth.login.email_not_verified'),
           error: 'EMAIL_NOT_VERIFIED',
           detail: 'Please verify your email address before accessing the system.',
         });
@@ -99,14 +129,14 @@ export class AuthService {
       if (error instanceof UnauthorizedException) {
         throw error;
       }
-      throw new UnauthorizedException('Invalid refresh token');
+      throw new UnauthorizedException(await this.i18n.translate('auth.token.invalid'));
     }
   }
 
   async generate2FASecret(userId: string) {
     const user = await this.usersService.findById(userId);
     if (!user) {
-      throw new BadRequestException('User not found');
+      throw new BadRequestException(await this.i18n.translate('users.not_found'));
     }
 
     const secret = speakeasy.generateSecret({
@@ -130,7 +160,7 @@ export class AuthService {
   async enable2FA(userId: string, token: string) {
     const user = await this.usersService.findById(userId);
     if (!user || !user.twoFactorSecret) {
-      throw new BadRequestException('2FA secret not generated');
+      throw new BadRequestException(await this.i18n.translate('auth.2fa.not_enabled'));
     }
 
     const verified = speakeasy.totp.verify({
@@ -140,7 +170,7 @@ export class AuthService {
     });
 
     if (!verified) {
-      throw new BadRequestException('Invalid 2FA token');
+      throw new BadRequestException(await this.i18n.translate('auth.2fa.invalid_code'));
     }
 
     await this.usersService.update(userId, {
@@ -153,7 +183,7 @@ export class AuthService {
       user.firstName || user.email,
     );
 
-    return { message: '2FA enabled successfully' };
+    return { message: await this.i18n.translate('auth.2fa.enabled') };
   }
 
   async verify2FA(userId: string, token: string): Promise<boolean> {
@@ -233,7 +263,7 @@ export class AuthService {
       this.logger.log(`User registered successfully: ${user.email}`);
       
       return {
-        message: 'User registered successfully. Please check your email to verify your account.',
+        message: await this.i18n.translate('auth.register.success'),
         user: result,
       };
     } catch (error) {
@@ -247,7 +277,7 @@ export class AuthService {
       if (error instanceof ConflictException) {
         throw error;
       }
-      throw new BadRequestException('Registration failed');
+      throw new BadRequestException(await this.i18n.translate('auth.register.validation_error'));
     }
   }
 
@@ -255,16 +285,16 @@ export class AuthService {
     const user = await this.usersService.findByVerificationToken(token);
 
     if (!user) {
-      throw new BadRequestException('Invalid verification token');
+      throw new BadRequestException(await this.i18n.translate('auth.verify_email.invalid_token'));
     }
 
     if (user.emailVerified) {
-      throw new BadRequestException('Email already verified');
+      throw new BadRequestException(await this.i18n.translate('auth.verify_email.already_verified'));
     }
 
     // Check if token is expired
     if (!user.emailVerificationTokenExpiry || user.emailVerificationTokenExpiry < new Date()) {
-      throw new BadRequestException('Verification token has expired. Please request a new verification email.');
+      throw new BadRequestException(await this.i18n.translate('auth.token.expired'));
     }
 
     await this.usersService.update(user.id, {
@@ -274,19 +304,19 @@ export class AuthService {
     });
 
     return {
-      message: 'Email verified successfully',
+      message: await this.i18n.translate('auth.verify_email.success'),
     };
   }
 
   async resendVerificationEmail(userId: string) {
     const user = await this.usersService.findById(userId);
-    
+
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException(await this.i18n.translate('users.not_found'));
     }
 
     if (user.emailVerified) {
-      throw new BadRequestException('Email already verified');
+      throw new BadRequestException(await this.i18n.translate('auth.resend_verification.already_verified'));
     }
 
     // Generate new verification token
@@ -307,7 +337,7 @@ export class AuthService {
     );
 
     return {
-      message: 'Verification email sent successfully',
+      message: await this.i18n.translate('auth.resend_verification.success'),
     };
   }
 
@@ -317,14 +347,14 @@ export class AuthService {
     if (!user) {
       // Don't reveal if user exists or not for security
       return {
-        message: 'If an account with this email exists and is not verified, a verification email has been sent.',
+        message: await this.i18n.translate('auth.resend_verification.rate_limit'),
       };
     }
 
     if (user.emailVerified) {
       // Don't reveal if user exists or not for security
       return {
-        message: 'If an account with this email exists and is not verified, a verification email has been sent.',
+        message: await this.i18n.translate('auth.resend_verification.rate_limit'),
       };
     }
 
@@ -346,7 +376,7 @@ export class AuthService {
     );
 
     return {
-      message: 'If an account with this email exists and is not verified, a verification email has been sent.',
+      message: await this.i18n.translate('auth.resend_verification.rate_limit'),
     };
   }
 
@@ -357,7 +387,7 @@ export class AuthService {
     // Also, operators cannot reset password via this method
     if (!user || user.role === 'operator') {
       return {
-        message: 'If an account with this email exists, a password reset link has been sent.',
+        message: await this.i18n.translate('auth.forgot_password.rate_limit'),
       };
     }
 
@@ -382,19 +412,19 @@ export class AuthService {
     );
 
     return {
-      message: 'If an account with this email exists, a password reset link has been sent.',
+      message: await this.i18n.translate('auth.forgot_password.success'),
     };
   }
 
   async resetPassword(token: string, newPassword: string) {
     const user = await this.usersService.findByPasswordResetToken(token);
-    
+
     if (!user) {
-      throw new BadRequestException('Invalid or expired reset token');
+      throw new BadRequestException(await this.i18n.translate('auth.reset_password.invalid_token'));
     }
 
     if (user.passwordResetExpires && new Date() > user.passwordResetExpires) {
-      throw new BadRequestException('Reset token has expired. Please request a new one.');
+      throw new BadRequestException(await this.i18n.translate('auth.token.expired'));
     }
 
     // Update password and clear reset token
@@ -405,7 +435,7 @@ export class AuthService {
     });
 
     return {
-      message: 'Password has been reset successfully. You can now login with your new password.',
+      message: await this.i18n.translate('auth.reset_password.success'),
     };
   }
 }

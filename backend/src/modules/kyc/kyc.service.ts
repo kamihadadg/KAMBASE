@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { I18nService } from 'nestjs-i18n';
 import { Kyc, KycLevel, KycStatus } from '../../entities/kyc.entity';
 import { CreateKycDto } from './dto/create-kyc.dto';
 import { UpdateKycDto } from './dto/update-kyc.dto';
@@ -14,6 +15,7 @@ export class KycService {
     private kycRepository: Repository<Kyc>,
     private emailService: EmailService,
     private usersService: UsersService,
+    private i18n: I18nService,
   ) {}
 
   async create(userId: string, createKycDto: CreateKycDto): Promise<Kyc> {
@@ -23,7 +25,7 @@ export class KycService {
     });
 
     if (existing) {
-      throw new NotFoundException('KYC record already exists');
+      throw new NotFoundException(await this.i18n.translate('kyc.already_submitted'));
     }
 
     const kyc = this.kycRepository.create({
@@ -43,7 +45,7 @@ export class KycService {
     });
 
     if (!kyc) {
-      throw new NotFoundException('KYC record not found');
+      throw new NotFoundException(await this.i18n.translate('kyc.not_found'));
     }
 
     return kyc;
@@ -53,14 +55,28 @@ export class KycService {
     const kyc = await this.findOne(userId);
 
     if (updateKycDto.level2Data) {
+      // Prevent modifying approved level 2 data
+      if (
+        (kyc.level === KycLevel.LEVEL2 || kyc.level === KycLevel.LEVEL3) &&
+        kyc.status === KycStatus.APPROVED &&
+        kyc.level2Data
+      ) {
+        throw new BadRequestException(await this.i18n.translate('kyc.level2_already_approved'));
+      }
       kyc.level = KycLevel.LEVEL2;
       kyc.level2Data = updateKycDto.level2Data;
+      kyc.status = KycStatus.PENDING; // Level 2 needs approval
       kyc.dailyWithdrawLimit = 1000; // Level 2 limit
     }
 
     if (updateKycDto.level3Data) {
+      // Prevent modifying approved level 3 data
+      if (kyc.level === KycLevel.LEVEL3 && kyc.status === KycStatus.APPROVED && kyc.level3Data) {
+        throw new BadRequestException(await this.i18n.translate('kyc.level3_already_approved'));
+      }
       kyc.level = KycLevel.LEVEL3;
       kyc.level3Data = updateKycDto.level3Data;
+      kyc.status = KycStatus.PENDING; // Level 3 needs approval
       kyc.dailyWithdrawLimit = 10000; // Level 3 limit
     }
 

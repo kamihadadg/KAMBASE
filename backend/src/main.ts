@@ -17,10 +17,16 @@ async function bootstrap() {
 
 
   // Security
-  app.use(helmet());
+  app.use(
+    helmet({
+      // Allow serving images/assets cross-origin (needed for uploaded files from backend to frontend domain)
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+    }),
+  );
   app.enableCors({
     origin: [
       process.env.FRONTEND_URL || 'http://localhost:8081',
+      process.env.BACKEND_URL || 'http://localhost:8080',
     ],
     credentials: true,
   });
@@ -37,7 +43,7 @@ async function bootstrap() {
   // Global exception filter for ThrottlerException
   app.useGlobalFilters(new ThrottlerExceptionFilter());
 
-  // Serve static files
+  // Serve static files from uploads directory
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {
     prefix: '/uploads/',
   });

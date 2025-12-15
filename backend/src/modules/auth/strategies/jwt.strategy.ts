@@ -19,10 +19,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: any) {
     const user = await this.usersService.findById(payload.sub);
-    if (!user || user.status !== 'active') {
-      throw new UnauthorizedException();
+    if (!user) {
+      throw new UnauthorizedException('User not found in database');
     }
-    
+
+    if (user.status !== 'active') {
+      throw new UnauthorizedException('Account is not active');
+    }
+
     if (!user.emailVerified) {
       throw new UnauthorizedException({
         message: 'Email verification required',
@@ -30,7 +34,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         detail: 'Please verify your email address before accessing protected resources.',
       });
     }
-    
+
     return { userId: user.id, email: user.email, role: user.role };
   }
 }

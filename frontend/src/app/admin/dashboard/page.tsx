@@ -90,12 +90,18 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Link
           href="/admin/kyc"
           className="p-6 bg-blue-600 hover:bg-blue-700 rounded-lg text-white text-center font-semibold transition-colors"
         >
           Manage KYC
+        </Link>
+        <Link
+          href="/operator/dashboard"
+          className="p-6 bg-green-600 hover:bg-green-700 rounded-lg text-white text-center font-semibold transition-colors"
+        >
+          Operator Panel
         </Link>
         <Link
           href="/profile"

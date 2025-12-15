@@ -5,8 +5,8 @@ interface User {
   id: string;
   email: string;
   role: string;
-  status?: string;
-  emailVerified?: boolean;
+  status: string;
+  emailVerified: boolean;
   twoFactorEnabled: boolean;
 }
 

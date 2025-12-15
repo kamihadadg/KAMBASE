@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { I18nService } from 'nestjs-i18n';
 import * as bcrypt from 'bcrypt';
 import { User, UserRole, UserStatus } from '../../entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -13,6 +14,7 @@ export class UsersService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     private configService: ConfigService,
+    private i18n: I18nService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -32,7 +34,7 @@ export class UsersService {
 
     if (existingUser) {
       console.log('[UsersService] User already exists:', createUserDto.email);
-      throw new ConflictException('User with this email already exists');
+      throw new ConflictException(await this.i18n.translate('auth.register.email_exists'));
     }
 
     // Check if this is the first user (no users exist)
@@ -92,7 +94,7 @@ export class UsersService {
   async findById(id: string): Promise<User> {
     const user = await this.usersRepository.findOne({ where: { id } });
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException(await this.i18n.translate('users.not_found'));
     }
     return user;
   }

@@ -1,0 +1,36 @@
+# Robots.txt for KAMEXCHANGE
+# https://kambase.ir/robots.txt
+
+User-agent: *
+Allow: /
+
+# Allow all major search engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+# Disallow admin and API routes
+Disallow: /admin/
+Disallow: /api/
+Disallow: /_next/
+Disallow: /static/
+
+# Allow sitemap
+Sitemap: https://kambase.ir/sitemap.xml
+
+# Crawl delay (optional)
+Crawl-delay: 1
