@@ -1,0 +1,134 @@
+@import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Vazir font for Persian text */
+@layer base {
+  * {
+    font-family: 'Vazir', 'Tahoma', 'Arial', sans-serif;
+  }
+  
+  [dir="ltr"] {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  
+  [dir="ltr"] * {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  
+  body {
+    font-family: 'Vazir', 'Tahoma', 'Arial', sans-serif !important;
+  }
+  
+  [dir="ltr"] body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  }
+  
+  html {
+    font-family: 'Vazir', 'Tahoma', 'Arial', sans-serif;
+  }
+  
+  [dir="ltr"] html {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 17, 24, 39;
+  --background-end-rgb: 17, 24, 39;
+}
+
+/* Light theme */
+:root:not(.dark) {
+  --foreground-rgb: 17, 24, 39;
+  --background-start-rgb: 255, 255, 255;
+  --background-end-rgb: 249, 250, 251;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-start-rgb));
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: 'Vazir', 'Tahoma', 'Arial', sans-serif !important;
+}
+
+[dir="ltr"] body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+}
+
+/* Prevent flash of unstyled content */
+html {
+  color-scheme: dark light;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+/* RTL support */
+[dir="rtl"] {
+  direction: rtl;
+}
+
+[dir="ltr"] {
+  direction: ltr;
+}
+
+/* Scrollbar for light theme */
+:root:not(.dark) ::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+:root:not(.dark) ::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+}
+
+:root:not(.dark) ::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Animations */
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}

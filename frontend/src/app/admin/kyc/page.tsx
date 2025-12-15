@@ -1,0 +1,329 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/store/auth-store';
+import { useLanguageStore } from '@/store/language-store';
+import api from '@/lib/api';
+
+interface KycRecord {
+  id: string;
+  userId: string;
+  level: 'level1' | 'level2' | 'level3';
+  status: 'pending' | 'approved' | 'rejected';
+  level1Data?: {
+    firstName?: string;
+    lastName?: string;
+    dateOfBirth?: string;
+    nationality?: string;
+  };
+  dailyWithdrawLimit: number;
+  reviewNotes?: string;
+  createdAt: string;
+  updatedAt: string;
+  user: {
+    id: string;
+    email: string;
+    firstName?: string;
+    lastName?: string;
+  };
+}
+
+export default function AdminKycPage() {
+  const router = useRouter();
+  const { isAuthenticated, user } = useAuthStore();
+  const { t } = useLanguageStore();
+  const [loading, setLoading] = useState(true);
+  const [kycRecords, setKycRecords] = useState<KycRecord[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<'all' | 'pending' | 'approved' | 'rejected'>('pending');
+  const [selectedRecord, setSelectedRecord] = useState<KycRecord | null>(null);
+  const [reviewNotes, setReviewNotes] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/login');
+      return;
+    }
+
+    if (user?.role !== 'admin') {
+      router.push('/dashboard');
+      return;
+    }
+
+    fetchKycRecords();
+  }, [isAuthenticated, user, router, selectedStatus]);
+
+  const fetchKycRecords = async () => {
+    try {
+      const status = selectedStatus === 'all' ? undefined : selectedStatus;
+      const response = await api.get('/kyc/all', { params: { status } });
+      setKycRecords(response.data);
+    } catch (error) {
+      console.error('Failed to fetch KYC records:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleApprove = async (userId: string) => {
+    setSubmitting(true);
+    try {
+      await api.post(`/kyc/${userId}/approve`, {
+        notes: reviewNotes || 'KYC approved successfully',
+      });
+      setSelectedRecord(null);
+      setReviewNotes('');
+      fetchKycRecords();
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Failed to approve KYC');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleReject = async (userId: string) => {
+    if (!reviewNotes.trim()) {
+      alert('Please provide rejection notes');
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      await api.post(`/kyc/${userId}/reject`, {
+        notes: reviewNotes,
+      });
+      setSelectedRecord(null);
+      setReviewNotes('');
+      fetchKycRecords();
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Failed to reject KYC');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (!isAuthenticated || loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading KYC records...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          KYC Management
+        </h1>
+        <p className="text-xl text-gray-600 dark:text-gray-400">
+          Review and manage user KYC verifications
+        </p>
+      </div>
+
+      {/* Filters */}
+      <div className="mb-6">
+        <div className="flex space-x-4">
+          {(['all', 'pending', 'approved', 'rejected'] as const).map((status) => (
+            <button
+              key={status}
+              onClick={() => setSelectedStatus(status)}
+              className={`px-4 py-2 rounded-md font-medium ${
+                selectedStatus === status
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+              }`}
+            >
+              {status.charAt(0).toUpperCase() + status.slice(1)} ({kycRecords.filter(r => status === 'all' || r.status === status).length})
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* KYC Records Table */}
+      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-800">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  User
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Level
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Withdraw Limit
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Submitted
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+              {kycRecords.map((record) => (
+                <tr key={record.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div>
+                      <div className="text-sm font-medium text-gray-900 dark:text-white">
+                        {record.user.firstName} {record.user.lastName}
+                      </div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                        {record.user.email}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
+                      {record.level.toUpperCase()}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      record.status === 'approved'
+                        ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
+                        : record.status === 'rejected'
+                        ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'
+                        : 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200'
+                    }`}>
+                      {record.status.toUpperCase()}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                    ${record.dailyWithdrawLimit}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    {new Date(record.createdAt).toLocaleDateString()}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    {record.status === 'pending' && (
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => setSelectedRecord(record)}
+                          className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
+                        >
+                          Review
+                        </button>
+                      </div>
+                    )}
+                    {record.status !== 'pending' && (
+                      <span className="text-gray-400">Reviewed</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {kycRecords.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500 dark:text-gray-400">No KYC records found</p>
+          </div>
+        )}
+      </div>
+
+      {/* Review Modal */}
+      {selectedRecord && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-900 rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+              Review KYC - {selectedRecord.user.firstName} {selectedRecord.user.lastName}
+            </h2>
+
+            {/* User Info */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">User Information</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Email</p>
+                  <p className="font-medium text-gray-900 dark:text-white">{selectedRecord.user.email}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">KYC Level</p>
+                  <p className="font-medium text-gray-900 dark:text-white">{selectedRecord.level}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Level 1 Data */}
+            {selectedRecord.level1Data && (
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Level 1 Data</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">First Name</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{selectedRecord.level1Data.firstName}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Last Name</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{selectedRecord.level1Data.lastName}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Date of Birth</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{selectedRecord.level1Data.dateOfBirth}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Nationality</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{selectedRecord.level1Data.nationality}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Review Notes */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Review Notes *
+              </label>
+              <textarea
+                value={reviewNotes}
+                onChange={(e) => setReviewNotes(e.target.value)}
+                rows={4}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                placeholder="Enter your review notes here..."
+                required
+              />
+            </div>
+
+            {/* Actions */}
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setSelectedRecord(null)}
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                disabled={submitting}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleReject(selectedRecord.userId)}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-md font-medium transition-colors"
+                disabled={submitting || !reviewNotes.trim()}
+              >
+                {submitting ? 'Rejecting...' : 'Reject'}
+              </button>
+              <button
+                onClick={() => handleApprove(selectedRecord.userId)}
+                className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-md font-medium transition-colors"
+                disabled={submitting}
+              >
+                {submitting ? 'Approving...' : 'Approve'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
