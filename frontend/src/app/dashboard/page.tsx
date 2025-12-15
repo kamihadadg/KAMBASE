@@ -46,10 +46,10 @@ export default function UserDashboardPage() {
       {/* Welcome Section */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-          User Dashboard
+          {t('userPage.title')}
         </h1>
         <p className="text-xl text-gray-600 dark:text-gray-400">
-          Welcome to your personal dashboard
+          {t('userPage.subtitle')}
         </p>
       </div>
 
@@ -73,21 +73,21 @@ export default function UserDashboardPage() {
         <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Account Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Email</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{t('userPage.email')}</p>
             <p className="font-medium text-gray-900 dark:text-white">{user?.email}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Role</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{t('userPage.role')}</p>
             <p className="font-medium text-gray-900 dark:text-white capitalize">{user?.role}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Status</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{t('userPage.status')}</p>
             <p className="font-medium text-gray-900 dark:text-white capitalize">{user?.status || 'active'}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Email Verified</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{t('userPage.emailVerified')}</p>
             <p className={`font-medium ${user?.emailVerified ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-              {user?.emailVerified ? 'Yes' : 'No'}
+              {user?.emailVerified ? t('userPage.emailVerifiedYes') : t('userPage.emailVerifiedNo')}
             </p>
           </div>
         </div>

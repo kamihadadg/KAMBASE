@@ -12,15 +12,16 @@ import { useLanguageStore } from '@/store/language-store';
 import { useThemeStore } from '@/store/theme-store';
 import Link from 'next/link';
 
-const loginSchema = z.object({
-  email: z.string().email('Invalid email'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  twoFactorCode: z.string().optional(),
-  // Optional; enforced only when site key exists
-  captchaToken: z.string().optional(),
-});
+const buildLoginSchema = (t: (key: string) => string) =>
+  z.object({
+    email: z.string().email(t('auth.invalidEmail')),
+    password: z.string().min(8, t('auth.passwordMin')),
+    twoFactorCode: z.string().optional(),
+    // Optional; enforced only when site key exists
+    captchaToken: z.string().optional(),
+  });
 
-type LoginForm = z.infer<typeof loginSchema>;
+type LoginForm = z.infer<ReturnType<typeof buildLoginSchema>>;
 
 export default function LoginPage() {
   const router = useRouter();
@@ -39,7 +40,7 @@ export default function LoginPage() {
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<LoginForm>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(buildLoginSchema(t)),
   });
 
   const onCaptchaChange = (token: string | null) => {
@@ -53,7 +54,7 @@ export default function LoginPage() {
       setError('');
       
       if (hasCaptcha && !data.captchaToken) {
-        setError('Please complete the CAPTCHA');
+        setError(t('auth.captchaRequired'));
         return;
       }
       
@@ -74,7 +75,7 @@ export default function LoginPage() {
       recaptchaRef.current?.reset();
       router.push('/trading');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed');
+      setError(err.response?.data?.message || t('auth.loginFailed'));
       recaptchaRef.current?.reset();
     }
   };
@@ -108,7 +109,7 @@ export default function LoginPage() {
                 {...register('email')}
                 type="email"
                 className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Enter your email"
+                placeholder={t('auth.emailPlaceholder')}
               />
               {errors.email && (
                 <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.email.message}</p>
@@ -130,7 +131,7 @@ export default function LoginPage() {
                 {...register('password')}
                 type="password"
                 className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Enter your password"
+                  placeholder={t('auth.passwordPlaceholder')}
               />
               {errors.password && (
                 <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.password.message}</p>

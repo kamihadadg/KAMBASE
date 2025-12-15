@@ -9,6 +9,7 @@ export default function OperatorDashboardPage() {
   const router = useRouter();
   const { isAuthenticated, user } = useAuthStore();
   const { t } = useLanguageStore();
+  const isAdminAccessing = user?.role === 'admin';
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,8 +22,6 @@ export default function OperatorDashboardPage() {
       router.push('/dashboard');
       return;
     }
-
-    const isAdminAccessing = user?.role === 'admin';
 
     setLoading(false);
   }, [isAuthenticated, user, router]);
@@ -43,12 +42,12 @@ export default function OperatorDashboardPage() {
       {/* Welcome Section */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-          {isAdminAccessing ? 'Admin - Operator Panel' : 'Operator Dashboard'}
+          {isAdminAccessing ? t('operatorPage.titleAdmin') : t('operatorPage.title')}
         </h1>
         <p className="text-xl text-gray-600 dark:text-gray-400">
           {isAdminAccessing
-            ? 'Administrative access to operator functions'
-            : 'Welcome to the Operator Control Panel'
+            ? t('operatorPage.subtitleAdmin')
+            : t('operatorPage.subtitle')
           }
         </p>
       </div>
@@ -64,12 +63,12 @@ export default function OperatorDashboardPage() {
           </div>
           <div>
             <h2 className="text-2xl font-bold text-green-900 dark:text-green-100">
-              {isAdminAccessing ? 'Administrator' : 'Operator'}
+              {isAdminAccessing ? t('operatorPage.roleTitleAdmin') : t('operatorPage.roleTitleOperator')}
             </h2>
             <p className="text-green-700 dark:text-green-300">
               {isAdminAccessing
-                ? 'Admin access to operator panel - full privileges'
-                : 'You have operator privileges'
+                ? t('operatorPage.roleDescAdmin')
+                : t('operatorPage.roleDescOperator')
               }
             </p>
           </div>
@@ -78,24 +77,24 @@ export default function OperatorDashboardPage() {
 
       {/* Operator Info */}
       <div className="bg-white dark:bg-gray-900 rounded-lg p-6 border border-gray-200 dark:border-gray-800 shadow-sm">
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Account Information</h3>
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t('operatorPage.accountInfo')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Email</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{t('operatorPage.email')}</p>
             <p className="font-medium text-gray-900 dark:text-white">{user?.email}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Role</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{t('operatorPage.role')}</p>
             <p className="font-medium text-gray-900 dark:text-white capitalize">{user?.role}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Status</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{t('operatorPage.status')}</p>
             <p className="font-medium text-gray-900 dark:text-white capitalize">{user?.status || 'active'}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Email Verified</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{t('operatorPage.emailVerified')}</p>
             <p className={`font-medium ${user?.emailVerified ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-              {user?.emailVerified ? 'Yes' : 'No'}
+              {user?.emailVerified ? t('operatorPage.emailVerifiedYes') : t('operatorPage.emailVerifiedNo')}
             </p>
           </div>
         </div>

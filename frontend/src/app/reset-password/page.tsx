@@ -9,15 +9,16 @@ import Link from 'next/link';
 import { useLanguageStore } from '@/store/language-store';
 import api from '@/lib/api';
 
-const resetPasswordSchema = z.object({
-  newPassword: z.string().min(8, 'Password must be at least 8 characters'),
-  confirmPassword: z.string().min(8, 'Password must be at least 8 characters'),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ['confirmPassword'],
-});
+const buildResetPasswordSchema = (t: (key: string) => string) =>
+  z.object({
+    newPassword: z.string().min(8, t('auth.passwordMin')),
+    confirmPassword: z.string().min(8, t('auth.passwordMin')),
+  }).refine((data) => data.newPassword === data.confirmPassword, {
+    message: t('auth.passwordsMismatch'),
+    path: ['confirmPassword'],
+  });
 
-type ResetPasswordForm = z.infer<typeof resetPasswordSchema>;
+type ResetPasswordForm = z.infer<ReturnType<typeof buildResetPasswordSchema>>;
 
 function ResetPasswordContent() {
   const router = useRouter();
@@ -34,7 +35,7 @@ function ResetPasswordContent() {
     formState: { errors },
     reset,
   } = useForm<ResetPasswordForm>({
-    resolver: zodResolver(resetPasswordSchema),
+    resolver: zodResolver(buildResetPasswordSchema(t)),
   });
 
   useEffect(() => {

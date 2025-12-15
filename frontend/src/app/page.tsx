@@ -45,22 +45,22 @@ export default function Home() {
           <div className="text-center max-w-5xl mx-auto">
             {/* Badge */}
             <div className="inline-flex items-center px-4 py-2 mb-8 bg-white/10 dark:bg-black/20 backdrop-blur-sm rounded-full border border-white/20">
-              <span className="text-white text-sm font-semibold">User Management System</span>
+              <span className="text-white text-sm font-semibold">{t('landing.badge')}</span>
             </div>
 
             {/* Main Title */}
             <h1 className="text-6xl md:text-8xl font-extrabold mb-6 text-white leading-tight">
-              KAM Platform
+              {t('landing.title')}
             </h1>
 
             {/* Subtitle */}
             <p className="text-2xl md:text-3xl font-semibold mb-4 text-white/90">
-              Secure User Management
+              {t('landing.subtitle')}
             </p>
 
             {/* Description */}
             <p className="text-lg md:text-xl mb-12 text-white/80 max-w-3xl mx-auto leading-relaxed">
-              A comprehensive user management platform with authentication, KYC verification, and profile management features.
+              {t('landing.description')}
             </p>
 
             {/* CTA Buttons */}
@@ -69,15 +69,15 @@ export default function Home() {
                 href="/register"
                 className="group relative px-8 py-4 bg-white text-blue-600 rounded-xl font-bold text-lg shadow-2xl hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105 hover:-translate-y-1 overflow-hidden"
               >
-                <span className="relative z-10 block">Get Started</span>
+                <span className="relative z-10 block">{t('landing.getStarted')}</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <span className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">Get Started</span>
+                <span className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">{t('landing.getStarted')}</span>
               </Link>
               <Link
                 href="/login"
                 className="px-8 py-4 bg-white/10 backdrop-blur-sm text-white rounded-xl font-bold text-lg border-2 border-white/30 hover:bg-white/20 transition-all duration-300 hover:scale-105"
               >
-                Sign In
+                {t('landing.signIn')}
               </Link>
             </div>
 
@@ -96,10 +96,10 @@ export default function Home() {
       <div className="container mx-auto px-4 py-24">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-white">
-            Secure & Reliable Platform
+            {t('landing.features.title')}
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Built with security and user experience in mind
+            {t('landing.features.subtitle')}
           </p>
         </div>
 
@@ -113,9 +113,9 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Secure Authentication</h3>
+              <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">{t('landing.features.auth.title')}</h3>
               <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                Advanced authentication with JWT tokens and two-factor authentication support.
+                {t('landing.features.auth.desc')}
               </p>
             </div>
           </div>
@@ -129,9 +129,9 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">KYC Verification</h3>
+              <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">{t('landing.features.kyc.title')}</h3>
               <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                Comprehensive KYC process with multiple verification levels for user compliance.
+                {t('landing.features.kyc.desc')}
               </p>
             </div>
           </div>
@@ -145,9 +145,9 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Profile Management</h3>
+              <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">{t('landing.features.profile.title')}</h3>
               <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                Complete user profile management with secure data handling and privacy controls.
+                {t('landing.features.profile.desc')}
               </p>
             </div>
           </div>
@@ -161,9 +161,9 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Email Integration</h3>
+              <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">{t('landing.features.email.title')}</h3>
               <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                Reliable email services for verification, notifications, and communication.
+                {t('landing.features.email.desc')}
               </p>
             </div>
           </div>
@@ -177,9 +177,9 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Multi-Language Support</h3>
+              <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">{t('landing.features.i18n.title')}</h3>
               <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                Support for multiple languages with easy switching and localization.
+                {t('landing.features.i18n.desc')}
               </p>
             </div>
           </div>
@@ -193,9 +193,9 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Dark Mode</h3>
+              <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">{t('landing.features.dark.title')}</h3>
               <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                Modern dark mode support for comfortable viewing in all lighting conditions.
+                {t('landing.features.dark.desc')}
               </p>
             </div>
           </div>
@@ -207,16 +207,16 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="relative container mx-auto px-4 text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
-            Ready to Get Started?
+            {t('landing.cta.title')}
           </h2>
           <p className="text-xl mb-10 text-white/90 max-w-2xl mx-auto">
-            Join thousands of users who trust our platform for secure user management.
+            {t('landing.cta.subtitle')}
           </p>
           <Link
             href="/register"
             className="inline-block px-10 py-5 bg-white text-blue-600 rounded-xl font-bold text-lg shadow-2xl hover:shadow-white/50 transition-all duration-300 hover:scale-105 hover:-translate-y-1"
           >
-            Create Account
+            {t('landing.cta.button')}
           </Link>
         </div>
       </div>

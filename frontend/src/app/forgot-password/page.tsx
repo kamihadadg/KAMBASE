@@ -8,11 +8,12 @@ import Link from 'next/link';
 import { useLanguageStore } from '@/store/language-store';
 import api from '@/lib/api';
 
-const forgotPasswordSchema = z.object({
-  email: z.string().email('Invalid email address'),
-});
+const buildForgotPasswordSchema = (t: (key: string) => string) =>
+  z.object({
+    email: z.string().email(t('auth.invalidEmail')),
+  });
 
-type ForgotPasswordForm = z.infer<typeof forgotPasswordSchema>;
+type ForgotPasswordForm = z.infer<ReturnType<typeof buildForgotPasswordSchema>>;
 
 export default function ForgotPasswordPage() {
   const { t } = useLanguageStore();
@@ -25,7 +26,7 @@ export default function ForgotPasswordPage() {
     handleSubmit,
     formState: { errors },
   } = useForm<ForgotPasswordForm>({
-    resolver: zodResolver(forgotPasswordSchema),
+    resolver: zodResolver(buildForgotPasswordSchema(t)),
   });
 
   const onSubmit = async (data: ForgotPasswordForm) => {

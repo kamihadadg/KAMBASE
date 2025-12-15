@@ -3,10 +3,12 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/auth-store';
+import { useLanguageStore } from '@/store/language-store';
 
 export default function KycPage() {
   const router = useRouter();
   const { isAuthenticated, user } = useAuthStore();
+  const { t } = useLanguageStore();
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -27,7 +29,7 @@ export default function KycPage() {
     <div className="flex items-center justify-center min-h-screen">
       <div className="text-center">
         <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-        <p className="text-gray-600 dark:text-gray-400">Redirecting to Profile...</p>
+        <p className="text-gray-600 dark:text-gray-400">{t('common.redirecting_to_profile')}</p>
       </div>
     </div>
   );

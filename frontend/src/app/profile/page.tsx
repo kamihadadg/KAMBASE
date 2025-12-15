@@ -18,12 +18,12 @@ const createSchemas = (t: (key: string) => string) => {
   });
 
   const passwordSchema = z.object({
-    currentPassword: z.string().min(1, t('profile.currentPasswordRequired')),
-    newPassword: z.string().min(8, t('profile.newPasswordMin')),
-    confirmPassword: z.string().min(8, t('profile.confirmPasswordMin')),
+    currentPassword: z.string().min(1, t('profile.currentPasswordRequired') || 'Current password is required'),
+    newPassword: z.string().min(8, t('profile.newPasswordMin') || 'Password must be at least 8 characters'),
+    confirmPassword: z.string().min(8, t('profile.confirmPasswordMin') || 'Password must be at least 8 characters'),
     twoFactorCode: z.string().optional(),
   }).refine((data) => data.newPassword === data.confirmPassword, {
-    message: t('profile.passwordsMismatch'),
+    message: t('profile.passwordsMismatch') || 'Passwords do not match',
     path: ['confirmPassword'],
   });
 
@@ -582,18 +582,17 @@ export default function ProfilePage() {
             </div>
             <div className="flex-1">
               <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
-                Complete Your KYC Verification
+                {t('profile.completeKycVerification')}
               </h3>
               <p className="text-blue-800 dark:text-blue-200 mb-4">
-                {!kyc ? (
-                  "Start your identity verification process to unlock higher withdrawal limits and access advanced features."
-                ) : kyc.status === 'pending' ? (
-                  "Your KYC submission is under review. We'll notify you once it's approved."
-                ) : kyc.status === 'rejected' ? (
-                  `Your KYC was rejected. ${kyc.reviewNotes ? `Reason: ${kyc.reviewNotes}` : 'Please try again with correct information.'}`
-                ) : (
-                  `Your KYC Level ${kyc.level.slice(-1)} is approved. Consider upgrading to Level ${parseInt(kyc.level.slice(-1)) + 1} for higher limits.`
-                )}
+                {!kyc
+                  ? t('profile.kycBannerStart')
+                  : kyc.status === 'pending'
+                  ? t('profile.kycBannerPending')
+                  : kyc.status === 'rejected'
+                  ? `Your KYC was rejected. ${kyc.reviewNotes ? `Reason: ${kyc.reviewNotes}` : 'Please try again with correct information.'}`
+                  : `Your KYC Level ${kyc.level.slice(-1)} is approved. Consider upgrading to Level ${parseInt(kyc.level.slice(-1)) + 1} for higher limits.`
+                }
               </p>
               {(kyc?.status === 'approved' || !kyc) && (
                 <button
@@ -979,10 +978,10 @@ export default function ProfilePage() {
           {/* KYC Form */}
           <div className="bg-white dark:bg-gray-900 rounded-lg p-6 border border-gray-200 dark:border-gray-800 shadow-sm">
             <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-              KYC Verification
+              {t('profile.kyc')}
             </h2>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Complete your identity verification to unlock higher withdrawal limits
+              {t('profile.kycBannerStart')}
             </p>
 
             {/* Level Tabs */}
@@ -1027,9 +1026,9 @@ export default function ProfilePage() {
                         }`}
                       >
                         Level {level.slice(-1)} - {
-                          level === 'level1' ? 'Basic Info' :
-                          level === 'level2' ? 'Document Upload' :
-                          'Advanced Verification'
+                          level === 'level1' ? t('profile.kycLevel1Title') :
+                          level === 'level2' ? t('profile.kycLevel2Title') :
+                          t('profile.kycLevel3Title')
                         }
                       </button>
                     ));
@@ -1042,17 +1041,17 @@ export default function ProfilePage() {
             {kycActiveLevel === 'level1' && (
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                  Level 1: Basic Information
+                  Level 1: {t('profile.kycLevel1Title')}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  Please provide your basic personal information to start the KYC process.
+                  {t('profile.kycLevel1Desc')}
                 </p>
 
                 <form onSubmit={handleKycLevel1Submit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        First Name
+                        {t('profile.firstName')}
                       </label>
                       <input
                         type="text"
@@ -1065,7 +1064,7 @@ export default function ProfilePage() {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Last Name
+                        {t('profile.lastName')}
                       </label>
                       <input
                         type="text"
@@ -1078,7 +1077,7 @@ export default function ProfilePage() {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Date of Birth
+                        {t('profile.dateOfBirth')}
                       </label>
                       <input
                         type="date"
@@ -1091,7 +1090,7 @@ export default function ProfilePage() {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Nationality
+                        {t('profile.nationality')}
                       </label>
                       <select
                         value={level1Form.nationality}
@@ -1099,14 +1098,14 @@ export default function ProfilePage() {
                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                         required
                       >
-                        <option value="">Select Nationality</option>
-                        <option value="iran">Iran</option>
-                        <option value="usa">United States</option>
-                        <option value="uk">United Kingdom</option>
-                        <option value="canada">Canada</option>
-                        <option value="germany">Germany</option>
-                        <option value="france">France</option>
-                        <option value="other">Other</option>
+                        <option value="">{t('profile.selectNationality')}</option>
+                        <option value="iran">{t('profile.country_iran')}</option>
+                        <option value="usa">{t('profile.country_usa')}</option>
+                        <option value="uk">{t('profile.country_uk')}</option>
+                        <option value="canada">{t('profile.country_canada')}</option>
+                        <option value="germany">{t('profile.country_germany')}</option>
+                        <option value="france">{t('profile.country_france')}</option>
+                        <option value="other">{t('profile.country_other')}</option>
                       </select>
                     </div>
                   </div>
@@ -1117,7 +1116,7 @@ export default function ProfilePage() {
                       disabled={submittingKyc}
                       className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-md font-medium transition-colors"
                     >
-                      {submittingKyc ? 'Submitting...' : 'Submit Level 1'}
+                      {submittingKyc ? t('common.submitting') : t('profile.submitLevel1')}
                     </button>
                   </div>
                 </form>
@@ -1128,10 +1127,10 @@ export default function ProfilePage() {
             {kycActiveLevel === 'level2' && (
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                  Level 2: Document Upload
+                  Level 2: {t('profile.kycLevel2Title')}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  Please upload clear photos of your national ID card and a selfie for identity verification.
+                  {t('profile.kycLevel2Desc')}
                 </p>
 
                 {(() => {
@@ -1145,7 +1144,7 @@ export default function ProfilePage() {
             {/* National Card Front */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                National Card Front
+                {t('profile.nationalCardFront')}
               </label>
               <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-md p-4 text-center">
                 <input
@@ -1160,7 +1159,7 @@ export default function ProfilePage() {
                     <svg className="mx-auto h-12 w-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                     </svg>
-                    <p>Click to upload front</p>
+                    <p>{t('profile.clickToUploadFront')}</p>
                   </div>
                 </label>
               </div>
@@ -1185,7 +1184,7 @@ export default function ProfilePage() {
                     {/* National Card Back */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        National Card Back
+                        {t('profile.nationalCardBack')}
                       </label>
                       <div className={`border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-md p-4 text-center ${isLevel2Locked ? 'opacity-60 cursor-not-allowed' : ''}`}>
                         <input
@@ -1201,7 +1200,7 @@ export default function ProfilePage() {
                             <svg className="mx-auto h-12 w-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                             </svg>
-                            <p>Click to upload back</p>
+                            <p>{t('profile.clickToUploadBack')}</p>
                           </div>
                         </label>
                       </div>
@@ -1230,7 +1229,7 @@ export default function ProfilePage() {
                     {/* Selfie */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Selfie
+                        {t('profile.selfie')}
                       </label>
                       <div className={`border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-md p-4 text-center ${isLevel2Locked ? 'opacity-60 cursor-not-allowed' : ''}`}>
                         <input
@@ -1246,7 +1245,7 @@ export default function ProfilePage() {
                             <svg className="mx-auto h-12 w-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                             </svg>
-                            <p>Click to upload selfie</p>
+                            <p>{t('profile.clickToUploadSelfie')}</p>
                           </div>
                         </label>
                       </div>
@@ -1279,7 +1278,7 @@ export default function ProfilePage() {
                       disabled={submittingKyc || isLevel2Locked}
                       className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-md font-medium transition-colors"
                     >
-                      {isLevel2Locked ? 'Level 2 Approved' : submittingKyc ? 'Submitting...' : 'Submit Level 2'}
+                      {isLevel2Locked ? t('profile.level2Approved') : submittingKyc ? t('common.submitting') : t('profile.submitLevel2')}
                     </button>
                   </div>
                 </form>
@@ -1292,16 +1291,16 @@ export default function ProfilePage() {
             {kycActiveLevel === 'level3' && (
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                  Level 3: Advanced Verification
+                  Level 3: {t('profile.kycLevel3Title')}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  For maximum withdrawal limits, please provide additional documentation.
+                  {t('profile.kycLevel3Desc')}
                 </p>
 
                 <form onSubmit={handleKycLevel3Submit} className="space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Additional Documents
+                      {t('profile.additionalDocuments')}
                     </label>
                     <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-md p-4 text-center">
                       <input
@@ -1317,8 +1316,8 @@ export default function ProfilePage() {
                           <svg className="mx-auto h-12 w-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                           </svg>
-                          <p>Click to upload additional documents</p>
-                          <p className="text-xs">PDF, DOC, DOCX, JPG, PNG (Max 5 files)</p>
+                          <p>{t('profile.clickToUploadAdditionalDocuments')}</p>
+                          <p className="text-xs">{t('profile.max_5_files')}</p>
                         </div>
                       </label>
                     </div>
@@ -1351,14 +1350,14 @@ export default function ProfilePage() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Additional Notes
+                      {t('profile.additionalNotes')}
                     </label>
                     <textarea
                       value={level3Form.notes}
                       onChange={(e) => setLevel3Form({ ...level3Form, notes: e.target.value })}
                       rows={4}
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                      placeholder="Any additional information you'd like to provide..."
+                      placeholder={t('profile.additionalNotesPlaceholder')}
                     />
                   </div>
 
@@ -1368,7 +1367,7 @@ export default function ProfilePage() {
                       disabled={submittingKyc}
                       className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-md font-medium transition-colors"
                     >
-                      {submittingKyc ? 'Submitting...' : 'Submit Level 3'}
+                      {submittingKyc ? t('common.submitting') : t('profile.submitLevel3')}
                     </button>
                   </div>
                 </form>
@@ -1382,7 +1381,7 @@ export default function ProfilePage() {
       {user?.role !== 'operator' && activeTab === 'activity' && (
         <div className="bg-white dark:bg-gray-900 rounded-lg p-6 border border-gray-200 dark:border-gray-800 shadow-sm">
           <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-            Recent Activity
+            {t('profile.recentActivity')}
           </h2>
           <div className="space-y-4">
             <div>

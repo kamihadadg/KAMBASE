@@ -141,7 +141,7 @@ export default function AdminKycPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading KYC records...</p>
+          <p className="text-gray-600 dark:text-gray-400">{t('admin.kyc.loading')}</p>
         </div>
       </div>
     );
@@ -152,10 +152,10 @@ export default function AdminKycPage() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-          KYC Management
+          {t('admin.kyc.title')}
         </h1>
         <p className="text-xl text-gray-600 dark:text-gray-400">
-          Review and manage user KYC verifications
+          {t('admin.kyc.subtitle')}
         </p>
       </div>
 
@@ -172,7 +172,7 @@ export default function AdminKycPage() {
                   : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
               }`}
             >
-              {status.charAt(0).toUpperCase() + status.slice(1)} ({kycRecords.filter(r => status === 'all' || r.status === status).length})
+              {t(`admin.kyc.filters.${status}`)} ({kycRecords.filter(r => status === 'all' || r.status === status).length})
             </button>
           ))}
         </div>
@@ -185,22 +185,22 @@ export default function AdminKycPage() {
             <thead className="bg-gray-50 dark:bg-gray-800">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  User
+                  {t('admin.kyc.table.user')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Level
+                  {t('admin.kyc.table.level')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Status
+                  {t('admin.kyc.table.status')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Withdraw Limit
+                  {t('admin.kyc.table.withdrawLimit')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Submitted
+                  {t('admin.kyc.table.submitted')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Actions
+                  {t('admin.kyc.table.actions')}
                 </th>
               </tr>
             </thead>
@@ -251,7 +251,7 @@ export default function AdminKycPage() {
                       </div>
                     )}
                     {record.status !== 'pending' && (
-                      <span className="text-gray-400">Reviewed</span>
+                      <span className="text-gray-400">{t('common.reviewed')}</span>
                     )}
                   </td>
                 </tr>
@@ -262,7 +262,7 @@ export default function AdminKycPage() {
 
         {kycRecords.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500 dark:text-gray-400">No KYC records found</p>
+            <p className="text-gray-500 dark:text-gray-400">{t('admin.kyc.noRecords')}</p>
           </div>
         )}
       </div>
@@ -272,19 +272,19 @@ export default function AdminKycPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-gray-900 rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              Review KYC - {selectedRecord.user.firstName} {selectedRecord.user.lastName}
+              {t('admin.kyc.modal.title')} - {selectedRecord.user.firstName} {selectedRecord.user.lastName}
             </h2>
 
             {/* User Info */}
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">User Information</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{t('profile.personalInfo')}</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Email</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{t('auth.email')}</p>
                   <p className="font-medium text-gray-900 dark:text-white">{selectedRecord.user.email}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">KYC Level</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{t('admin.kyc.table.level')}</p>
                   <p className="font-medium text-gray-900 dark:text-white">{selectedRecord.level}</p>
                 </div>
               </div>
@@ -293,22 +293,22 @@ export default function AdminKycPage() {
             {/* Level 1 Data */}
             {selectedRecord.level1Data && (
               <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Level 1 Data</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{t('admin.kyc.modal.level1')}</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">First Name</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{t('profile.firstName')}</p>
                     <p className="font-medium text-gray-900 dark:text-white">{selectedRecord.level1Data.firstName}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Last Name</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{t('profile.lastName')}</p>
                     <p className="font-medium text-gray-900 dark:text-white">{selectedRecord.level1Data.lastName}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Date of Birth</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{t('profile.dateOfBirth')}</p>
                     <p className="font-medium text-gray-900 dark:text-white">{selectedRecord.level1Data.dateOfBirth}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Nationality</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{t('profile.nationality')}</p>
                     <p className="font-medium text-gray-900 dark:text-white">{selectedRecord.level1Data.nationality}</p>
                   </div>
                 </div>
@@ -318,38 +318,38 @@ export default function AdminKycPage() {
             {/* Level 2 Data */}
             {selectedRecord.level2Data && (
               <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Level 2 Data</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{t('admin.kyc.modal.level2')}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {selectedRecord.level2Data.nationalCardFront && (
+                  {selectedRecord.level2Data?.nationalCardFront && (
                     <div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">National Card Front</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{t('profile.nationalCardFront')}</p>
                       <img
                         src={resolveUrl(selectedRecord.level2Data.nationalCardFront, selectedRecord.user.id)}
                         alt="National Card Front"
                         className="w-full h-32 object-cover rounded border border-gray-300 dark:border-gray-600 cursor-pointer"
-                        onClick={() => setPreviewImage(selectedRecord.level2Data.nationalCardFront!)}
+                        onClick={() => setPreviewImage(selectedRecord.level2Data!.nationalCardFront!)}
                       />
                     </div>
                   )}
-                  {selectedRecord.level2Data.nationalCardBack && (
+                  {selectedRecord.level2Data?.nationalCardBack && (
                     <div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">National Card Back</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{t('profile.nationalCardBack')}</p>
                       <img
                         src={resolveUrl(selectedRecord.level2Data.nationalCardBack, selectedRecord.user.id)}
                         alt="National Card Back"
                         className="w-full h-32 object-cover rounded border border-gray-300 dark:border-gray-600 cursor-pointer"
-                        onClick={() => setPreviewImage(selectedRecord.level2Data.nationalCardBack!)}
+                        onClick={() => setPreviewImage(selectedRecord.level2Data!.nationalCardBack!)}
                       />
                     </div>
                   )}
-                  {selectedRecord.level2Data.selfie && (
+                  {selectedRecord.level2Data?.selfie && (
                     <div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Selfie</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{t('profile.selfie')}</p>
                       <img
                         src={resolveUrl(selectedRecord.level2Data.selfie, selectedRecord.user.id)}
                         alt="Selfie"
                         className="w-full h-32 object-cover rounded border border-gray-300 dark:border-gray-600 cursor-pointer"
-                        onClick={() => setPreviewImage(selectedRecord.level2Data.selfie!)}
+                        onClick={() => setPreviewImage(selectedRecord.level2Data!.selfie!)}
                       />
                     </div>
                   )}
@@ -360,10 +360,10 @@ export default function AdminKycPage() {
             {/* Level 3 Data */}
             {selectedRecord.level3Data && (
               <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Level 3 Data</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{t('admin.kyc.modal.level3')}</h3>
                 {selectedRecord.level3Data.additionalDocuments && selectedRecord.level3Data.additionalDocuments.length > 0 && (
                   <div className="mb-4">
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Additional Documents</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{t('profile.additionalDocuments')}</p>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                       {selectedRecord.level3Data.additionalDocuments.map((doc, index) => (
                         <div key={index}>
@@ -380,7 +380,7 @@ export default function AdminKycPage() {
                 )}
                 {selectedRecord.level3Data.notes && (
                   <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Additional Notes</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{t('profile.additionalNotes')}</p>
                     <p className="text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800 p-3 rounded border">
                       {selectedRecord.level3Data.notes}
                     </p>
@@ -392,14 +392,14 @@ export default function AdminKycPage() {
             {/* Review Notes */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Review Notes *
+                {t('admin.kyc.modal.reviewNotes')} *
               </label>
               <textarea
                 value={reviewNotes}
                 onChange={(e) => setReviewNotes(e.target.value)}
                 rows={4}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                placeholder="Enter your review notes here..."
+                placeholder={t('admin.kyc.modal.reviewNotesPlaceholder')}
                 required
               />
             </div>
@@ -411,21 +411,21 @@ export default function AdminKycPage() {
                 className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
                 disabled={submitting}
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={() => handleReject(selectedRecord.userId)}
                 className="px-4 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-md font-medium transition-colors"
                 disabled={submitting || !reviewNotes.trim()}
               >
-                {submitting ? 'Rejecting...' : 'Reject'}
+                {submitting ? t('admin.kyc.modal.rejecting') : t('admin.kyc.modal.reject')}
               </button>
               <button
                 onClick={() => handleApprove(selectedRecord.userId)}
                 className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-md font-medium transition-colors"
                 disabled={submitting}
               >
-                {submitting ? 'Approving...' : 'Approve'}
+                {submitting ? t('admin.kyc.modal.approving') : t('admin.kyc.modal.approve')}
               </button>
             </div>
           </div>

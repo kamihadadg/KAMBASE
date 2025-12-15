@@ -11,16 +11,17 @@ import { useLanguageStore } from '@/store/language-store';
 import { useThemeStore } from '@/store/theme-store';
 import Link from 'next/link';
 
-const registerSchema = z.object({
-  email: z.string().email('Invalid email'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
-  // Optional; enforced only when site key exists
-  captchaToken: z.string().optional(),
-});
+const buildRegisterSchema = (t: (key: string) => string) =>
+  z.object({
+    email: z.string().email(t('auth.invalidEmail')),
+    password: z.string().min(8, t('auth.passwordMin')),
+    firstName: z.string().optional(),
+    lastName: z.string().optional(),
+    // Optional; enforced only when site key exists
+    captchaToken: z.string().optional(),
+  });
 
-type RegisterForm = z.infer<typeof registerSchema>;
+type RegisterForm = z.infer<ReturnType<typeof buildRegisterSchema>>;
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -38,7 +39,7 @@ export default function RegisterPage() {
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<RegisterForm>({
-    resolver: zodResolver(registerSchema),
+    resolver: zodResolver(buildRegisterSchema(t)),
   });
 
   const onCaptchaChange = (token: string | null) => {
@@ -52,7 +53,7 @@ export default function RegisterPage() {
       setError('');
       
       if (hasCaptcha && !data.captchaToken) {
-        setError('Please complete the CAPTCHA');
+        setError(t('auth.captchaRequired'));
         return;
       }
       
@@ -63,7 +64,7 @@ export default function RegisterPage() {
         router.push('/login');
       }, 2000);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Registration failed');
+      setError(err.response?.data?.message || t('auth.registrationFailed'));
       recaptchaRef.current?.reset();
     }
   };
@@ -90,7 +91,7 @@ export default function RegisterPage() {
           )}
           {success && (
             <div className="bg-green-50 dark:bg-green-900/50 border border-green-300 dark:border-green-700 text-green-800 dark:text-green-200 px-4 py-3 rounded">
-              Registration successful! Redirecting to login...
+              {t('auth.registrationSuccess')}
             </div>
           )}
           <div className="space-y-4">
@@ -102,7 +103,7 @@ export default function RegisterPage() {
                 {...register('email')}
                 type="email"
                 className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Enter your email"
+                placeholder={t('auth.emailPlaceholder')}
               />
               {errors.email && (
                 <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.email.message}</p>
@@ -116,7 +117,7 @@ export default function RegisterPage() {
                 {...register('password')}
                 type="password"
                 className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Enter your password"
+                placeholder={t('auth.passwordPlaceholder')}
               />
               {errors.password && (
                 <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.password.message}</p>

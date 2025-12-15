@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { useState } from 'react';
+import { useLanguageStore } from '@/store/language-store';
 
 interface FilePreviewProps {
   file: File | string;
@@ -9,6 +10,7 @@ interface FilePreviewProps {
 
 export default function FilePreview({ file, onRemove, className = '' }: FilePreviewProps) {
   const [imageError, setImageError] = useState(false);
+  const { t } = useLanguageStore();
 
   const isFile = file instanceof File;
   const fileName = isFile ? file.name : file.split('/').pop() || 'file';
@@ -30,7 +32,7 @@ export default function FilePreview({ file, onRemove, className = '' }: FilePrev
             <button
               onClick={onRemove}
               className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-              title="Remove file"
+              title={t('common.remove_file')}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -58,14 +60,14 @@ export default function FilePreview({ file, onRemove, className = '' }: FilePrev
           {fileName}
         </p>
         <p className="text-xs text-gray-500 dark:text-gray-400">
-          {isFile ? `${(file.size / 1024).toFixed(1)} KB` : 'Uploaded'}
+          {isFile ? `${(file.size / 1024).toFixed(1)} KB` : t('common.uploaded')}
         </p>
       </div>
       {onRemove && (
         <button
           onClick={onRemove}
           className="flex-shrink-0 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
-          title="Remove file"
+          title={t('common.remove_file')}
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

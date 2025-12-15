@@ -39,7 +39,6 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://kambase.ir'),
   alternates: {
     canonical: '/',
     languages: {
