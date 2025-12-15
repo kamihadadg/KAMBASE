@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/auth-store';
 import { useLanguageStore } from '@/store/language-store';
+import AuthGuard from '@/components/AuthGuard';
 import api from '@/lib/api';
 
 interface KycRecord {
@@ -38,7 +39,7 @@ interface KycRecord {
   };
 }
 
-export default function AdminKycPage() {
+function AdminKycPageContent() {
   const router = useRouter();
   const { isAuthenticated, user } = useAuthStore();
   const { t } = useLanguageStore();
@@ -74,18 +75,8 @@ export default function AdminKycPage() {
   };
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/login');
-      return;
-    }
-
-    if (user?.role !== 'admin') {
-      router.push('/dashboard');
-      return;
-    }
-
     fetchKycRecords();
-  }, [isAuthenticated, user, router, selectedStatus]);
+  }, [selectedStatus]);
 
   const fetchKycRecords = async () => {
     try {
@@ -453,5 +444,13 @@ export default function AdminKycPage() {
             </div>
           )}
     </div>
+  );
+}
+
+export default function AdminKycPage() {
+  return (
+    <AuthGuard requiredRole="admin">
+      <AdminKycPageContent />
+    </AuthGuard>
   );
 }

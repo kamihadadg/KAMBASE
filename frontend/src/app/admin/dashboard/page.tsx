@@ -1,41 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/auth-store';
 import { useLanguageStore } from '@/store/language-store';
+import AuthGuard from '@/components/AuthGuard';
 import Link from 'next/link';
 
-export default function AdminDashboardPage() {
-  const router = useRouter();
-  const { isAuthenticated, user } = useAuthStore();
+function AdminDashboardContent() {
+  const { user } = useAuthStore();
   const { t } = useLanguageStore();
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/login');
-      return;
-    }
-
-    if (user?.role !== 'admin') {
-      router.push('/dashboard');
-      return;
-    }
-
-    setLoading(false);
-  }, [isAuthenticated, user, router]);
-
-  if (!isAuthenticated || loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">{t('dashboard.loading') || 'Loading...'}</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -117,5 +89,13 @@ export default function AdminDashboardPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function AdminDashboardPage() {
+  return (
+    <AuthGuard requiredRole="admin">
+      <AdminDashboardContent />
+    </AuthGuard>
   );
 }

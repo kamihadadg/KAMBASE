@@ -73,7 +73,15 @@ export default function LoginPage() {
       const { access_token, refresh_token, user } = response.data;
       setAuth(user, access_token, refresh_token);
       recaptchaRef.current?.reset();
-      router.push('/trading');
+
+      // Redirect based on user role
+      if (user.role === 'admin') {
+        router.push('/admin/dashboard');
+      } else if (user.role === 'operator') {
+        router.push('/operator/dashboard');
+      } else {
+        router.push('/dashboard');
+      }
     } catch (err: any) {
       setError(err.response?.data?.message || t('auth.loginFailed'));
       recaptchaRef.current?.reset();

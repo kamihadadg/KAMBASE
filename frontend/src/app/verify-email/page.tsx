@@ -32,9 +32,9 @@ function VerifyEmailContent() {
         setStatus('success');
         setMessage(response.data.message || t('verify.success'));
         
-        // Redirect to login after 3 seconds
+        // Redirect to dashboard after 3 seconds (user is now verified)
         setTimeout(() => {
-          router.push('/login');
+          router.push('/dashboard');
         }, 3000);
       } catch (error: any) {
         setStatus('error');

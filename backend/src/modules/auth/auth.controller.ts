@@ -36,7 +36,12 @@ export class AuthController {
   ) {}
 
   @Post('register')
-  @ApiOperation({ summary: 'Register a new user' })
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 5, ttl: 900000 } }) // 5 registrations per 15 minutes
+  @ApiOperation({
+    summary: 'Register a new user',
+    description: 'Rate limited to 5 registrations per 15 minutes per IP address to prevent abuse'
+  })
   async register(@Body() registerDto: RegisterDto, @Request() req) {
     console.log('[AuthController] Register request received:', {
       ip: req.ip,
@@ -58,8 +63,13 @@ export class AuthController {
   }
 
   @Post('login')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 10, ttl: 900000 } }) // 10 login attempts per 15 minutes
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Login user' })
+  @ApiOperation({
+    summary: 'Login user',
+    description: 'Rate limited to 10 login attempts per 15 minutes per IP address to prevent brute force attacks'
+  })
   async login(@Request() req, @Body() loginDto: LoginDto) {
     // Verify CAPTCHA only if token is provided
     if (loginDto.captchaToken) {
@@ -109,8 +119,13 @@ export class AuthController {
   }
 
   @Post('refresh')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 20, ttl: 3600000 } }) // 20 refresh attempts per hour
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Refresh access token' })
+  @ApiOperation({
+    summary: 'Refresh access token',
+    description: 'Rate limited to 20 refresh attempts per hour per IP address'
+  })
   async refresh(@Body() refreshTokenDto: RefreshTokenDto) {
     return this.authService.refreshToken(refreshTokenDto.refreshToken);
   }
@@ -132,8 +147,13 @@ export class AuthController {
   }
 
   @Post('2fa/verify')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 5, ttl: 300000 } }) // 5 attempts per 5 minutes
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Verify 2FA token' })
+  @ApiOperation({
+    summary: 'Verify 2FA token',
+    description: 'Rate limited to 5 attempts per 5 minutes per IP address to prevent brute force attacks'
+  })
   async verify2FA(@Body() verify2FADto: Verify2FADto) {
     const isValid = await this.authService.verify2FA(
       verify2FADto.userId,
@@ -184,8 +204,13 @@ export class AuthController {
   }
 
   @Post('reset-password')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 5, ttl: 900000 } }) // 5 reset attempts per 15 minutes
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Reset password with token from email' })
+  @ApiOperation({
+    summary: 'Reset password with token from email',
+    description: 'Rate limited to 5 reset attempts per 15 minutes per IP address to prevent abuse'
+  })
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     return this.authService.resetPassword(resetPasswordDto.token, resetPasswordDto.newPassword);
   }

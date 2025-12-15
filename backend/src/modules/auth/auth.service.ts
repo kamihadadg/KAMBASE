@@ -36,9 +36,29 @@ export class AuthService {
       throw new UnauthorizedException(await this.i18n.translate('auth.login.invalid_credentials'));
     }
 
+    // Check if account is locked
+    if (user.lockedUntil && user.lockedUntil > new Date()) {
+      const remainingTime = Math.ceil((user.lockedUntil.getTime() - Date.now()) / 60000); // minutes
+      throw new UnauthorizedException({
+        message: await this.i18n.translate('auth.login.account_locked_temporarily', { args: { minutes: remainingTime } }),
+        error: 'ACCOUNT_LOCKED_TEMPORARILY',
+        detail: `Account is temporarily locked. Try again in ${remainingTime} minutes.`,
+      });
+    }
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
+      // Increment failed login attempts
+      await this.handleFailedLogin(user.id);
       throw new UnauthorizedException(await this.i18n.translate('auth.login.invalid_credentials'));
+    }
+
+    // Reset failed attempts on successful login
+    if (user.failedLoginAttempts > 0) {
+      await this.usersService.update(user.id, {
+        failedLoginAttempts: 0,
+        lockedUntil: null,
+      });
     }
 
     if (user.status !== 'active') {
@@ -437,6 +457,22 @@ export class AuthService {
     return {
       message: await this.i18n.translate('auth.reset_password.success'),
     };
+  }
+
+  private async handleFailedLogin(userId: string): Promise<void> {
+    const user = await this.usersService.findById(userId);
+    if (!user) return;
+
+    const newAttempts = (user.failedLoginAttempts || 0) + 1;
+    const updateData: any = { failedLoginAttempts: newAttempts };
+
+    // Lock account after 5 failed attempts for 15 minutes
+    if (newAttempts >= 5) {
+      updateData.lockedUntil = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+      updateData.failedLoginAttempts = 0; // Reset counter after lock
+    }
+
+    await this.usersService.update(userId, updateData);
   }
 }
 

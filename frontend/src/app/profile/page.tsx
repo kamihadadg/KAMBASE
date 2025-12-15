@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuthStore } from '@/store/auth-store';
 import { useLanguageStore } from '@/store/language-store';
+import AuthGuard from '@/components/AuthGuard';
 import api, { uploadApi } from '@/lib/api';
 import FilePreview from '@/components/kyc/FilePreview';
 
@@ -34,7 +35,7 @@ type Schemas = ReturnType<typeof createSchemas>;
 type ProfileForm = z.infer<Schemas['profileSchema']>;
 type PasswordForm = z.infer<Schemas['passwordSchema']>;
 
-export default function ProfilePage() {
+function ProfilePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, isAuthenticated } = useAuthStore();
@@ -1410,6 +1411,14 @@ export default function ProfilePage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <AuthGuard>
+      <ProfilePageContent />
+    </AuthGuard>
   );
 }
 

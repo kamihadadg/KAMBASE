@@ -27,7 +27,15 @@ export default function Home() {
 
   // Show landing page for non-authenticated users
   if (isAuthenticated) {
-    return null; // Will redirect
+    // Show loading while redirecting
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">{t('common.loading')}</p>
+        </div>
+      </div>
+    );
   }
 
   return (

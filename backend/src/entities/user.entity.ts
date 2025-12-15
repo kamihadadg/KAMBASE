@@ -87,6 +87,12 @@ export class User {
   @Column({ nullable: true })
   passwordResetExpires: Date;
 
+  @Column({ default: 0 })
+  failedLoginAttempts: number;
+
+  @Column({ nullable: true })
+  lockedUntil: Date;
+
   @OneToMany(() => Kyc, (kyc) => kyc.user)
   kycRecords: Kyc[];
 

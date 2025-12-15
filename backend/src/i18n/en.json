@@ -4,6 +4,7 @@
       "success": "Login successful",
       "invalid_credentials": "Invalid email or password",
       "account_locked": "Account is locked. Please contact support",
+    "account_locked_temporarily": "Account is temporarily locked. Try again in {minutes} minutes.",
       "email_not_verified": "Email not verified. Please check your email",
       "user_not_found": "User not found"
     },

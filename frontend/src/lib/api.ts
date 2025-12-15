@@ -39,9 +39,16 @@ api.interceptors.response.use(
           return api(originalRequest)
         }
       } catch (refreshError) {
+        // Clear auth state and tokens
         localStorage.removeItem('access_token')
         localStorage.removeItem('refresh_token')
-        window.location.href = '/login'
+        // Reset auth store
+        if (typeof window !== 'undefined') {
+          // Import dynamically to avoid circular dependency
+          import('@/store/auth-store').then(({ useAuthStore }) => {
+            useAuthStore.getState().logout()
+          })
+        }
         return Promise.reject(refreshError)
       }
     }
@@ -85,9 +92,16 @@ uploadApi.interceptors.response.use(
           return uploadApi(originalRequest)
         }
       } catch (refreshError) {
+        // Clear auth state and tokens
         localStorage.removeItem('access_token')
         localStorage.removeItem('refresh_token')
-        window.location.href = '/login'
+        // Reset auth store
+        if (typeof window !== 'undefined') {
+          // Import dynamically to avoid circular dependency
+          import('@/store/auth-store').then(({ useAuthStore }) => {
+            useAuthStore.getState().logout()
+          })
+        }
         return Promise.reject(refreshError)
       }
     }

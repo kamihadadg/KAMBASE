@@ -10,6 +10,7 @@ import { Suspense } from 'react';
 import api from '@/lib/api';
 import { useAuthStore } from '@/store/auth-store';
 import { useLanguageStore } from '@/store/language-store';
+import AuthGuard from '@/components/AuthGuard';
 import Link from 'next/link';
 
 const verify2FASchema = z.object({
@@ -21,7 +22,7 @@ type Verify2FAForm = z.infer<typeof verify2FASchema>;
 function Setup2FAContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, isAuthenticated } = useAuthStore();
+  const { user } = useAuthStore();
   const { t } = useLanguageStore();
   const [loading, setLoading] = useState(true);
   const [qrCode, setQrCode] = useState<string>('');
@@ -40,11 +41,6 @@ function Setup2FAContent() {
   });
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/login');
-      return;
-    }
-
     // Operators cannot enable 2FA
     if (user?.role === 'operator') {
       router.push('/profile');
@@ -65,7 +61,7 @@ function Setup2FAContent() {
     };
 
     generateSecret();
-  }, [isAuthenticated, router, user, t]);
+  }, [router, user, t]);
 
   const onSubmit = async (data: Verify2FAForm) => {
     try {
@@ -260,7 +256,9 @@ export default function Setup2FAPage() {
         </div>
       </div>
     }>
-      <Setup2FAContent />
+      <AuthGuard>
+        <Setup2FAContent />
+      </AuthGuard>
     </Suspense>
   );
 }

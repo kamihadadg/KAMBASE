@@ -66,5 +66,14 @@ export class UpdateUserDto {
   @IsOptional()
   @IsDateString()
   passwordResetExpires?: Date | null;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  failedLoginAttempts?: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsDateString()
+  lockedUntil?: Date | null;
 }
 
